@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINADET | Giỏ hàng</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS tương tự shop.html nhưng thêm phần cart và checkout modal */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+        body {
+            background: #f5f5f5;
+        }
+        header {
+            background-color: #D8EEFF;
+            padding: 20px 0;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 95%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 20px;
+        }
+        .logo-icon {
+            height: 70px;
+            width: 70px;
+            background: #fff;
+            padding: 8px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        .brand-name {
+            font-size: 26px;
+            font-weight: 800;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        nav {
+            flex: 1;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .nav-links li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+        .nav-links li a:hover,
+        .nav-links li a.active {
+            color: #0068ff;
+        }
+        .user-cart-icons {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        .user-cart-icons a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ========== VÙNG GIỎ HÀNG ========== */
+        .cart-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .cart-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .cart-items-section {
+            flex: 2;
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .cart-summary {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0b4a6f;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.5rem;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+        .cart-item-info {
+            flex: 2;
+            min-width: 150px;
+        }
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .cart-item-variant {
+            font-size: 0.8rem;
+            color: #777;
+            background: #f0f0f0;
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+        }
+        .cart-item-price {
+            font-weight: 600;
+            color: #d82d4e;
+            min-width: 100px;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f0f0f0;
+            border-radius: 30px;
+            padding: 0.2rem 0.5rem;
+        }
+        .cart-qty-btn {
+            background: none;
+            border: none;
+            width: 28px;
+            height: 28px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .cart-qty-btn:hover {
+            background: #ddd;
+        }
+        .cart-item-total {
+            font-weight: 700;
+            color: #d82d4e;
+            min-width: 100px;
+            text-align: right;
+        }
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.2s;
+        }
+        .cart-item-remove:hover {
+            color: #d82d4e;
+        }
+        .summary-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .summary-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #d82d4e;
+            border-top: 1px dashed #ddd;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+        /* Voucher chọn từ dropdown */
+        .voucher-input {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .voucher-input select {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            background: white;
+            font-size: 0.9rem;
+        }
+        .voucher-input button {
+            background: #ffb85b;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .checkout-btn {
+            width: 100%;
+            background: #ffb85b;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: 0.2s;
+        }
+        .checkout-btn:hover {
+            background: #ffa32e;
+        }
+        .clear-cart-btn {
+            width: 100%;
+            background: #f0f0f0;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.8rem;
+            color: #d82d4e;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 2rem;
+            color: #777;
+        }
+        .empty-cart a {
+            color: #ffb85b;
+            text-decoration: none;
+        }
+
+        /* ========== MODAL THANH TOÁN ========== */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkout-modal .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            border-radius: 24px;
+            padding: 1.5rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .checkout-modal h3 {
+            font-size: 1.6rem;
+            color: #0b4a6f;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            outline: none;
+        }
+        .payment-summary {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 16px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .qr-container {
+            text-align: center;
+            margin: 1rem 0;
+            display: none;
+        }
+        .qr-container img {
+            width: 180px;
+            height: 180px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background: white;
+        }
+        .qr-note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .payment-checkbox {
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .btn-submit-order {
+            width: 100%;
+            background: #ffb85b;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .btn-submit-order:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .clear-info {
+            text-align: right;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+        .clear-info a {
+            color: #ffb85b;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* ========== FOOTER (giống shop) ========== */
+        footer {
+            background: white;
+            padding: 50px 0 20px;
+            margin-top: 60px;
+            border-top: 1px solid #ddd;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            margin: 0 auto;
+        }
+        .footer-section {
+            flex: 1;
+        }
+        .footer-left { text-align: left; }
+        .footer-center {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .footer-right { text-align: right; }
+        .footer-center .social-list {
+            margin-top: auto;
+        }
+        .footer-logo {
+            height: 200px;
+            width: auto;
+            border-radius: 50%;
+            mix-blend-mode: multiply;
+        }
+        .footer-bottom {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .toast-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #0b4a6f;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            z-index: 2000;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .cart-item-price, .cart-item-total {
+                text-align: left;
+            }
+            .cart-summary {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <img src="Logo.jpg" class="logo-icon" alt="MINADET Logo">
+                <h1 class="brand-name">MINADET</h1>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#">Trang chủ</a></li>
+                    <li><a href="#">About & Blog</a></li>
+                    <li><a href="#">News</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                </ul>
+            </nav>
+            <div class="user-cart-icons">
+                <a href="cart.html" class="active"><i class="fa-solid fa-cart-shopping"></i> Giỏ hàng</a>
+                <a href="#"><i class="fa-solid fa-user"></i> Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <div class="cart-layout">
+            <!-- Danh sách sản phẩm trong giỏ -->
+            <div class="cart-items-section">
+                <div class="cart-title">Giỏ hàng của bạn</div>
+                <div id="cartItemsList"></div>
+            </div>
+            <!-- Phần tổng thanh toán và voucher -->
+            <div class="cart-summary">
+                <div class="summary-title">Tổng thanh toán</div>
+                <div class="summary-row">
+                    <span>Tổng tiền hàng:</span>
+                    <span id="subtotal">0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span id="shippingFee">30,000₫</span>
+                </div>
+                <!-- Dropdown chọn mã giảm giá -->
+                <div class="voucher-input">
+                    <select id="voucherSelect">
+                        <option value="none">-- Chọn mã giảm giá --</option>
+                        <option value="MINADET20">MINADET20 – Giảm 20.000₫</option>
+                        <option value="FREESHIP">FREESHIP – Miễn phí vận chuyển (30.000₫)</option>
+                        <option value="WELCOME10">WELCOME10 – Giảm 10% tối đa 50.000₫</option>
+                    </select>
+                    <button id="applyVoucher">Áp dụng</button>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Tổng cộng:</span>
+                    <span id="finalTotal">0</span>
+                </div>
+                <button class="checkout-btn" id="checkoutBtn">Thanh toán ngay</button>
+                <button class="clear-cart-btn" id="clearCartBtn">Xóa toàn bộ giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section footer-left">
+                <h3>LIÊN HỆ</h3>
+                <p><i class="fa-solid fa-location-dot"></i> 123 Đường Thời Trang, TP. HCM</p>
+                <p><i class="fa-solid fa-envelope"></i> minadet@gmail.com</p>
+                <p><i class="fa-solid fa-phone"></i> 0985 456 789</p>
+            </div>
+            <div class="footer-section footer-center">
+                <h3>KẾT NỐI</h3>
+                <div class="social-list">
+                    <a href="#"><i class="fa-brands fa-facebook"></i> Facebook</a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i> Instagram</a>
+                </div>
+            </div>
+            <div class="footer-section footer-right">
+                <img src="z7422437863261_5d50162a20e5c0c5de5b5f7ac26ef554.jpg" class="footer-logo" alt="MINADET Footer Logo">
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 MINADET - Minimalism is Lifestyle</p></div>
+    </footer>
+
+    <!-- MODAL THANH TOÁN -->
+    <div id="checkoutModal" class="checkout-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeCheckout">&times;</span>
+            <h3>THANH TOÁN ĐƠN HÀNG</h3>
+            <form id="checkoutForm">
+                <div class="form-group"><label>Họ và tên *</label><input type="text" id="fullName" required></div>
+                <div class="form-group"><label>Số điện thoại *</label><input type="tel" id="phone" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="email"></div>
+                <div class="form-group"><label>Địa chỉ giao hàng *</label><input type="text" id="address" required></div>
+                <div class="form-group"><label>Phương thức thanh toán</label>
+                    <select id="paymentMethod">
+                        <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+                        <option value="bank">Chuyển khoản ngân hàng</option>
+                        <option value="momo">Ví MoMo</option>
+                    </select>
+                </div>
+                <div class="payment-summary">
+                    <p>Tổng tiền hàng: <strong id="summarySubtotal">0</strong> ₫</p>
+                    <p>Phí vận chuyển: <strong id="summaryShipping">30,000</strong> ₫</p>
+                    <p>Giảm giá: <strong id="summaryDiscount">0</strong> ₫</p>
+                    <p>Thành tiền: <strong id="summaryFinal">0</strong> ₫</p>
+                </div>
+                <div id="qrContainer" class="qr-container">
+                    <img id="qrImage" src="" alt="QR Code">
+                    <div class="qr-note">Quét mã QR để thanh toán</div>
+                </div>
+                <div id="paymentConfirm" class="payment-checkbox" style="display: none;">
+                    <label>
+                        <input type="checkbox" id="paymentConfirmed"> Tôi đã quét mã và hoàn tất thanh toán
+                    </label>
+                </div>
+                <div class="clear-info"><a id="clearSavedInfo">Xóa thông tin đã lưu</a></div>
+                <button type="submit" id="submitOrderBtn" class="btn-submit-order">XÁC NHẬN ĐẶT HÀNG</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ========== ĐỌC DỮ LIỆU GIỎ HÀNG ==========
+        let cart = JSON.parse(localStorage.getItem('minadetCart')) || [];
+        let discount = 0;  // Biến lưu giá trị giảm giá
+
+        /**
+         * Lưu giỏ hàng vào localStorage
+         */
+        function saveCart() {
+            localStorage.setItem('minadetCart', JSON.stringify(cart));
+        }
+
+        /**
+         * Định dạng số tiền
+         * @param {number} price - Giá cần định dạng
+         * @returns {string}
+         */
+        function formatPrice(price) {
+            return price.toLocaleString() + '₫';
+        }
+
+        /**
+         * Cập nhật tất cả các ô hiển thị tổng tiền
+         */
+        function updateTotals() {
+            // Tính tổng tiền hàng (subtotal)
+            const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+            const shipping = 30000;  // Phí vận chuyển cố định
+            const final = subtotal + shipping - discount;
+            // Cập nhật trên trang chính
+            document.getElementById('subtotal').innerText = formatPrice(subtotal);
+            document.getElementById('finalTotal').innerText = formatPrice(final);
+            // Cập nhật trong modal thanh toán
+            document.getElementById('summarySubtotal').innerText = formatPrice(subtotal);
+            document.getElementById('summaryShipping').innerText = formatPrice(shipping);
+            document.getElementById('summaryDiscount').innerText = formatPrice(discount);
+            document.getElementById('summaryFinal').innerText = formatPrice(final);
+        }
+
+        /**
+         * Vẽ lại toàn bộ danh sách sản phẩm trong giỏ
+         */
+        function renderCart() {
+            const container = document.getElementById('cartItemsList');
+            if (!cart.length) {
+                container.innerHTML = `<div class="empty-cart">🛒 Giỏ hàng trống. <a href="shop.html">Tiếp tục mua sắm</a></div>`;
+                updateTotals();
+                return;
+            }
+            let html = '';
+            cart.forEach((item, idx) => {
+                const itemTotal = item.price * item.qty;
+                html += `
+                    <div class="cart-item">
+                        <img src="${item.img || 'placeholder.jpg'}" class="cart-item-image">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${escapeHtml(item.name)}</div>
+                            <div class="cart-item-variant">${item.color} - ${item.size}</div>
+                        </div>
+                        <div class="cart-item-price">${formatPrice(item.price)}</div>
+                        <div class="cart-item-quantity">
+                            <button class="cart-qty-btn" data-action="dec" data-idx="${idx}">−</button>
+                            <span>${item.qty}</span>
+                            <button class="cart-qty-btn" data-action="inc" data-idx="${idx}">+</button>
+                        </div>
+                        <div class="cart-item-total">${formatPrice(itemTotal)}</div>
+                        <button class="cart-item-remove" data-idx="${idx}"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            // Gắn sự kiện cho các nút tăng/giảm số lượng
+            document.querySelectorAll('.cart-qty-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    const action = btn.dataset.action;
+                    if (action === 'inc') {
+                        cart[idx].qty++;
+                    } else if (action === 'dec') {
+                        if (cart[idx].qty > 1) cart[idx].qty--;
+                        else cart.splice(idx, 1);
+                    }
+                    saveCart();
+                    renderCart();
+                });
+            });
+            // Gắn sự kiện cho nút xóa sản phẩm
+            document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.idx);
+                    cart.splice(idx, 1);
+                    saveCart();
+                    renderCart();
+                });
+            });
+            updateTotals();
+        }
+
+        /**
+         * Xử lý ký tự đặc biệt để tránh lỗi XSS
+         * @param {string} str - Chuỗi cần escape
+         * @returns {string}
+         */
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // ========== XỬ LÝ VOUCHER (chọn từ dropdown) ==========
+        document.getElementById('applyVoucher').addEventListener('click', () => {
+            const selected = document.getElementById('voucherSelect').value;
+            const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+            let newDiscount = 0;
+            let message = '';
+
+            switch (selected) {
+                case 'MINADET20':
+                    newDiscount = 20000;
+                    message = 'Áp dụng mã MINADET20: giảm 20.000₫';
+                    break;
+                case 'FREESHIP':
+                    newDiscount = 30000;
+                    message = 'Áp dụng mã FREESHIP: miễn phí vận chuyển (30.000₫)';
+                    break;
+                case 'WELCOME10':
+                    const percent = subtotal * 0.1;
+                    newDiscount = Math.min(percent, 50000);
+                    message = `Áp dụng mã WELCOME10: giảm 10% (tối đa 50.000₫) – giảm ${newDiscount.toLocaleString()}₫`;
+                    break;
+                default:
+                    newDiscount = 0;
+                    message = 'Vui lòng chọn mã giảm giá hợp lệ.';
+                    break;
+            }
+            discount = newDiscount;
+            updateTotals();
+            showToast(message);
+        });
+
+        // ========== XÓA TOÀN BỘ GIỎ HÀNG ==========
+        document.getElementById('clearCartBtn').addEventListener('click', () => {
+            if (confirm('Xóa tất cả sản phẩm trong giỏ?')) {
+                cart = [];
+                saveCart();
+                renderCart();
+            }
+        });
+
+        // ========== THANH TOÁN ==========
+        const checkoutModal = document.getElementById('checkoutModal');
+        const closeCheckout = document.getElementById('closeCheckout');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const checkoutForm = document.getElementById('checkoutForm');
+        const clearSavedInfoBtn = document.getElementById('clearSavedInfo');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+        const qrContainer = document.getElementById('qrContainer');
+        const paymentConfirmDiv = document.getElementById('paymentConfirm');
+        const paymentConfirmedCheckbox = document.getElementById('paymentConfirmed');
+        const submitOrderBtn = document.getElementById('submitOrderBtn');
+        const STORAGE_CUSTOMER = 'minadet_customer_info';
+
+        /**
+         * Đọc thông tin khách hàng đã lưu từ localStorage
+         */
+        function loadCustomerInfo() {
+            const saved = localStorage.getItem(STORAGE_CUSTOMER);
+            if (saved) {
+                try {
+                    const info = JSON.parse(saved);
+                    document.getElementById('fullName').value = info.fullName || '';
+                    document.getElementById('phone').value = info.phone || '';
+                    document.getElementById('email').value = info.email || '';
+                    document.getElementById('address').value = info.address || '';
+                } catch(e) {}
+            }
+        }
+
+        /**
+         * Lưu thông tin khách hàng vào localStorage
+         */
+        function saveCustomerInfo() {
+            const info = {
+                fullName: document.getElementById('fullName').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                address: document.getElementById('address').value.trim()
+            };
+            localStorage.setItem(STORAGE_CUSTOMER, JSON.stringify(info));
+        }
+
+        /**
+         * Xóa thông tin khách hàng đã lưu
+         */
+        function clearSavedCustomer() {
+            localStorage.removeItem(STORAGE_CUSTOMER);
+            document.getElementById('fullName').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('address').value = '';
+            showToast('Đã xóa thông tin đã lưu.');
+        }
+
+        /**
+         * Tạo và hiển thị QR code dựa trên phương thức thanh toán
+         */
+        function updateQRCode() {
+            const method = paymentMethodSelect.value;
+            const subtotal = cart.reduce((s,i) => s + i.price * i.qty, 0);
+            const final = subtotal + 30000 - discount;
+            const amountText = formatPrice(final);
+            let qrData = '';
+            if (method === 'bank') {
+                // Nội dung QR cho chuyển khoản ngân hàng
+                qrData = `NGÂN HÀNG: VIETCOMBANK\nSỐ TK: 123456789\nCHỦ TK: MINADET\nSỐ TIỀN: ${amountText}\nNỘI DUNG: THANHTOAN_MINADET_${Date.now()}`;
+                qrContainer.style.display = 'block';
+                paymentConfirmDiv.style.display = 'block';
+            } else if (method === 'momo') {
+                // Nội dung QR cho Ví MoMo
+                qrData = `MOMO: 0985456789\nNỘI DUNG: THANHTOAN_MINADET_${Date.now()}\nSỐ TIỀN: ${amountText}`;
+                qrContainer.style.display = 'block';
+                paymentConfirmDiv.style.display = 'block';
+            } else {
+                // COD: ẩn QR và checkbox
+                qrContainer.style.display = 'none';
+                paymentConfirmDiv.style.display = 'none';
+                paymentConfirmedCheckbox.checked = false;
+                submitOrderBtn.disabled = false;
+                return;
+            }
+            // Gọi API tạo QR từ qrserver.com
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+            document.getElementById('qrImage').src = qrUrl;
+            submitOrderBtn.disabled = true;  // Vô hiệu hóa nút đặt hàng cho đến khi tick checkbox
+            paymentConfirmedCheckbox.checked = false;
+        }
+
+        // Khi thay đổi phương thức thanh toán, cập nhật lại QR
+        paymentMethodSelect.addEventListener('change', updateQRCode);
+        // Khi tick checkbox, bật/tắt nút đặt hàng
+        paymentConfirmedCheckbox.addEventListener('change', () => {
+            submitOrderBtn.disabled = !paymentConfirmedCheckbox.checked;
+        });
+
+        // Mở modal thanh toán
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) { showToast('Giỏ hàng trống!'); return; }
+            updateTotals();
+            loadCustomerInfo();
+            updateQRCode();
+            checkoutModal.style.display = 'flex';
+        });
+        closeCheckout.addEventListener('click', () => checkoutModal.style.display = 'none');
+        window.addEventListener('click', (e) => { if (e.target === checkoutModal) checkoutModal.style.display = 'none'; });
+        clearSavedInfoBtn.addEventListener('click', clearSavedCustomer);
+
+        // Xử lý đặt hàng
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            if (!fullName || !phone || !address) {
+                showToast('Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ!');
+                return;
+            }
+            const method = paymentMethodSelect.value;
+            if (method !== 'cod' && !paymentConfirmedCheckbox.checked) {
+                showToast('Vui lòng xác nhận đã thanh toán qua QR code.');
+                return;
+            }
+            saveCustomerInfo();
+            const paymentText = method === 'cod' ? 'Thanh toán khi nhận hàng' : (method === 'bank' ? 'Chuyển khoản ngân hàng' : 'Ví MoMo');
+            const finalTotal = cart.reduce((s,i) => s + i.price * i.qty, 0) + 30000 - discount;
+            showToast(`Đặt hàng thành công! Cảm ơn ${fullName}. Đơn hàng sẽ được giao đến ${address}. Phương thức: ${paymentText} · Tổng: ${formatPrice(finalTotal)}`);
+            // Xóa giỏ hàng sau khi đặt thành công
+            cart = [];
+            discount = 0;
+            saveCart();
+            renderCart();
+            checkoutModal.style.display = 'none';
+            checkoutForm.reset();
+            paymentConfirmedCheckbox.checked = false;
+            submitOrderBtn.disabled = false;
+        });
+
+        /**
+         * Hiển thị thông báo tạm thời
+         * @param {string} msg - Nội dung thông báo
+         */
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Khởi tạo trang
+        renderCart();
+    </script>
+</body>
+</html>
